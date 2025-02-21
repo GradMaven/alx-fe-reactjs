@@ -1,5 +1,6 @@
-// UserContext.js
+
 import React from 'react';
+import { createContext } from 'react';
 
 const UserContext = React.createContext();
 
