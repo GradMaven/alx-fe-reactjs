@@ -46,7 +46,7 @@ const RegistrationForm = () => {
             <input
             type="text"
             name="username"
-            value={formData.username}
+            value={username}
             onChange={handleChange}
             className="w-full p-2 border rounded"
           />
@@ -57,7 +57,7 @@ const RegistrationForm = () => {
           <input
             type="email"
             name="email"
-            value={formData.email}
+            value={email}
             onChange={handleChange}
             className
           />
@@ -68,7 +68,7 @@ const RegistrationForm = () => {
           <input
             type="password"
             name="password"
-            value={formData.password}
+            value={password}
             onChange={handleChange}
             className="w-full p-2 border rounded"
           />
