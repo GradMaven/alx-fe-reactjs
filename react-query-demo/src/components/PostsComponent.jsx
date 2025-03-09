@@ -11,6 +11,9 @@ const PostsComponent = () => {
         queryKey: ["posts"],
         queryFn: fetchPosts,
         staleTime: 5000, // Caches data for 5 seconds
+        cacheTime: 10000, // Cache lasts for 10 seconds before garbage collection
+        refetchOnWindowFocus: false, // Prevents refetching when switching tabs
+        keepPreviousData: true, // Prevents flashing of empty data during refetch
       });
     
       if (isLoading) return <p className="text-center">Loading posts...</p>;
