@@ -14,7 +14,7 @@ const PostsComponent = () => {
       });
     
       if (isLoading) return <p className="text-center">Loading posts...</p>;
-      if (error) return <p className="text-center text-red-500">Error: {error.message}</p>;
+      if (isError) return <p className="text-center text-red-500">Error: {isError.message}</p>;
     
       return (
         <div className="max-w-2xl mx-auto p-6 bg-white shadow-md rounded-md">
