@@ -21,9 +21,9 @@ const RegistrationForm = () => {
     // Validate form fields
   const validateForm = () => {
     let errors = {};
-    if (!formData.username.trim()) errors.username = "Username is required";
-    if (!formData.email.trim()) errors.email = "Email is required";
-    if (!formData.password.trim()) errors.password = "Password is required";
+    if (!username.trim()) errors.username = "Username is required";
+    if (!email.trim()) errors.email = "Email is required";
+    if (!password.trim()) errors.password = "Password is required";
     setErrors(errors);
     return Object.keys(errors).length === 0;
   };
