@@ -21,21 +21,21 @@ const RecipeDetail = () => {
     }
   
     return (
-      <div className="container mx-auto p-4">
-        <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
-          <img src={recipe.image} alt={recipe.title} className="w-full h-64 object-cover rounded-md" />
-          <h1 className="text-3xl font-bold mt-4">{recipe.title}</h1>
-          <p className="text-gray-700 mt-2">{recipe.summary}</p>
-          <h2 className="text-2xl font-semibold mt-6">Ingredients</h2>
-          <ul className="list-disc list-inside mt-2 text-gray-600">
-            {recipe.ingredients?.map((ingredient, index) => (
-              <li key={index}>{ingredient}</li>
-            ))}
-          </ul>
-          <h2 className="text-2xl font-semibold mt-6">Instructions</h2>
-          <p className="text-gray-700 mt-2">{recipe.instructions}</p>
-        </div>
+      <div className="container mx-auto p-4 sm:p-6">
+      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6 sm:p-8">
+        <img src={recipe.image} alt={recipe.title} className="w-full h-64 sm:h-80 object-cover rounded-md" />
+        <h1 className="text-2xl sm:text-3xl font-bold mt-4">{recipe.title}</h1>
+        <p className="text-gray-700 mt-2 sm:text-lg">{recipe.summary}</p>
+        <h2 className="text-xl sm:text-2xl font-semibold mt-6">Ingredients</h2>
+        <ul className="list-disc list-inside mt-2 text-gray-600 sm:text-base">
+          {recipe.ingredients?.map((ingredient, index) => (
+            <li key={index}>{ingredient}</li>
+          ))}
+        </ul>
+        <h2 className="text-xl sm:text-2xl font-semibold mt-6">Instructions</h2>
+        <p className="text-gray-700 mt-2 sm:text-base">{recipe.instructions}</p>
       </div>
+    </div>
     );
   };
   
