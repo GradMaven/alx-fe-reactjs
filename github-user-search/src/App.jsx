@@ -1,26 +1,40 @@
 import { useState } from "react";
+import axios from "axios";
 
-function Search({ onSearch }) {
+function Search() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const [error, setError] = useState("");
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError("");
+    setResults([]);
+
+    try {
+      let searchQuery = `https://api.github.com/search/users?q=${query}`;
+      if (location) searchQuery += `+location:${location}`;
+      if (minRepos) searchQuery += `+repos:>${minRepos}`;
+
+      const response = await axios.get(searchQuery);
+      setResults(response.data.items);
+    } catch (err) {
+      setError("Looks like we can't find the user.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (query.trim() === "") {
+      setError("Please enter a username.");
       return;
     }
-    setLoading(true);
-    try {
-      const data = await onSearch({ query, location, minRepos });
-      setResults(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
-    }
+    await fetchUsers();
   };
 
   return (
@@ -56,6 +70,8 @@ function Search({ onSearch }) {
       </form>
 
       {loading && <p className="text-center mt-4 text-blue-600">Loading...</p>}
+
+      {error && <p className="text-center mt-4 text-red-600">{error}</p>}
 
       {results.length > 0 && (
         <div className="mt-6">
