@@ -1,10 +1,5 @@
-
-
+// src/services/githubService.js
 import axios from 'axios';
-
-const API_URL = 'https://api.github.com/users/';
-const API_KEY = import.meta.env.VITE_APP_GITHUB_API_KEY; 
-
 
 const BASE_URL = 'https://api.github.com';
 
@@ -20,9 +15,11 @@ const fetchAdvancedUserData = async (params) => {
     const queryString = queryParts.join(' ');
     const perPage = 10;
     
-    const response = await axios.get(`${BASE_URL}/search/users`, {
+    // Explicitly construct the URL with q parameter
+    const apiUrl = `${BASE_URL}/search/users?q=${encodeURIComponent(queryString)}`;
+    
+    const response = await axios.get(apiUrl, {
       params: {
-        q: queryString,
         page: params.page || 1,
         per_page: perPage
       }
@@ -50,4 +47,3 @@ const fetchAdvancedUserData = async (params) => {
 };
 
 export { fetchAdvancedUserData };
-
