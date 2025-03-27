@@ -1,21 +1,17 @@
 import axios from "axios";
 
-const BASE_URL = "https://api.github.com/search/users";
+const BASE_URL = "https://api.github.com/search/users?q=";
 
-export const fetchUserData = async ({ query, location, minRepos }) => {
+export const fetchUserData = async (query, location, minRepos) => {
   try {
-    let searchQuery = `q=${query}`;
+    let searchQuery = `${BASE_URL}${query}`;
+    if (location) searchQuery += `+location:${location}`;
+    if (minRepos) searchQuery += `+repos:>${minRepos}`;
 
-    if (location) {
-      searchQuery += `+location:${location}`;
-    }
-    if (minRepos) {
-      searchQuery += `+repos:>${minRepos}`;
-    }
-
-    const response = await axios.get(`${BASE_URL}?${searchQuery}`);
+    const response = await axios.get(searchQuery);
     return response.data.items;
   } catch (error) {
-    throw new Error("User not found or API limit exceeded");
+    console.error("Error fetching user data:", error);
+    return [];
   }
 };
