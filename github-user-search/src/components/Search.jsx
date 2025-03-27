@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const SearchBar = ({ onSearch }) => {
+const Search = ({ onSearch }) => {
   const [query, setQuery] = useState('');
 
   const handleSearch = (event) => {
@@ -9,7 +9,8 @@ const SearchBar = ({ onSearch }) => {
       onSearch(query);
     }
   };
-
+  const Search = ({ user, loading, error }) => {
+      
   return (
     <form onSubmit={handleSearch}>
       <input
@@ -19,8 +20,21 @@ const SearchBar = ({ onSearch }) => {
         placeholder="Search GitHub User"
       />
       <button type="submit">Search</button>
+
+      <div>
+        {loading && <p>Loading...</p>}
+        {error && <p>Looks like we can't find the user</p>}
+        {user && (
+          <div>
+            <img src={user.avatar_url} alt={user.login} width={100} />
+            <h2>{user.name || user.login}</h2>
+            <p>{user.bio}</p>
+            <a href={user.html_url} target="_blank" rel="noopener noreferrer">GitHub Profile</a>
+          </div>
+        )}
+      </div>
     </form>
   );
-};
+}};
 
-export default SearchBar;
+export default Search;
