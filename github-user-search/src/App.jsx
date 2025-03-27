@@ -1,100 +1,55 @@
 import { useState } from "react";
-import axios from "axios";
+import Search from "./components/Search";
+import { fetchUserData } from "./services/githubService";
 
-function Search() {
-  const [query, setQuery] = useState("");
-  const [location, setLocation] = useState("");
-  const [minRepos, setMinRepos] = useState("");
+function App() {
+  const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
   const [error, setError] = useState("");
 
-  const fetchUsers = async () => {
+  const handleSearch = async (filters) => {
     setLoading(true);
     setError("");
-    setResults([]);
+    setUsers([]);
 
     try {
-      let searchQuery = `https://api.github.com/search/users?q=${query}`;
-      if (location) searchQuery += `+location:${location}`;
-      if (minRepos) searchQuery += `+repos:>${minRepos}`;
-
-      const response = await axios.get(searchQuery);
-      setResults(response.data.items);
+      const userData = await fetchUserData(filters);
+      setUsers(userData);
     } catch (err) {
-      setError("Looks like we can't find the user.");
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (query.trim() === "") {
-      setError("Please enter a username.");
-      return;
-    }
-    await fetchUsers();
-  };
-
   return (
-    <div className="max-w-lg mx-auto p-6 bg-white rounded-lg shadow-lg">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Enter GitHub username..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="text"
-          placeholder="Location (Optional)"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <input
-          type="number"
-          placeholder="Min Repositories (Optional)"
-          value={minRepos}
-          onChange={(e) => setMinRepos(e.target.value)}
-          className="w-full p-2 border rounded"
-        />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-        >
-          Search
-        </button>
-      </form>
+    <div className="p-8 bg-gray-100 min-h-screen">
+      <h1 className="text-3xl font-bold text-center mb-6">GitHub User Search</h1>
+      <Search onSearch={handleSearch} />
 
       {loading && <p className="text-center mt-4 text-blue-600">Loading...</p>}
+      {error && <p className="text-center mt-4 text-red-500">{error}</p>}
 
-      {error && <p className="text-center mt-4 text-red-600">{error}</p>}
-
-      {results.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-lg font-bold">Results:</h2>
-          <ul className="space-y-2">
-            {results.map((user) => (
-              <li key={user.id} className="p-2 bg-gray-100 rounded shadow">
-                <p>{user.login}</p>
-                <a
-                  href={user.html_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500"
-                >
-                  View Profile
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {users.map((user) => (
+          <div key={user.id} className="p-4 bg-white rounded-lg shadow-md">
+            <img src={user.avatar_url} alt={user.login} className="w-24 h-24 mx-auto rounded-full" />
+            <h2 className="text-xl font-semibold text-center mt-2">{user.login}</h2>
+            <p className="text-center text-gray-600">{user.location || "No location available"}</p>
+            <p className="text-center text-gray-600">Repositories: {user.public_repos || "N/A"}</p>
+            <a
+              href={user.html_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block text-center text-blue-500 mt-2"
+            >
+              View Profile
+            </a>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
 
-export default Search;
+export default App;
