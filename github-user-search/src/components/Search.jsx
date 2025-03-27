@@ -1,13 +1,40 @@
 import { useState } from "react";
+import axios from "axios";
 
-function Search({ onSearch }) {
+function Search() {
   const [query, setQuery] = useState("");
   const [location, setLocation] = useState("");
   const [minRepos, setMinRepos] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [results, setResults] = useState([]);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const fetchUsers = async () => {
+    setLoading(true);
+    setError("");
+    setResults([]);
+
+    try {
+      let searchQuery = `https://api.github.com/search/users?q=${query}`;
+      if (location) searchQuery += `+location:${location}`;
+      if (minRepos) searchQuery += `+repos:>${minRepos}`;
+
+      const response = await axios.get(searchQuery);
+      setResults(response.data.items);
+    } catch (err) {
+      setError("Looks like we can't find the user.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSearch({ query, location, minRepos });
+    if (query.trim() === "") {
+      setError("Please enter a username.");
+      return;
+    }
+    await fetchUsers();
   };
 
   return (
@@ -41,6 +68,31 @@ function Search({ onSearch }) {
           Search
         </button>
       </form>
+
+      {loading && <p className="text-center mt-4 text-blue-600">Loading...</p>}
+
+      {error && <p className="text-center mt-4 text-red-600">{error}</p>}
+
+      {results.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-lg font-bold">Results:</h2>
+          <ul className="space-y-2">
+            {results.map((user) => (
+              <li key={user.id} className="p-2 bg-gray-100 rounded shadow">
+                <p>{user.login}</p>
+                <a
+                  href={user.html_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500"
+                >
+                  View Profile
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
