@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import { fetchUserData } from "../services/githubService";
 
 function Search() {
   const [query, setQuery] = useState("");
@@ -9,32 +9,25 @@ function Search() {
   const [results, setResults] = useState([]);
   const [error, setError] = useState("");
 
-  const fetchUsers = async () => {
-    setLoading(true);
-    setError("");
-    setResults([]);
-
-    try {
-      let searchQuery = `https://api.github.com/search/users?q=${query}`;
-      if (location) searchQuery += `+location:${location}`;
-      if (minRepos) searchQuery += `+repos:>${minRepos}`;
-
-      const response = await axios.get(searchQuery);
-      setResults(response.data.items);
-    } catch (err) {
-      setError("Looks like we can't find the user.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (query.trim() === "") {
       setError("Please enter a username.");
       return;
     }
-    await fetchUsers();
+
+    setLoading(true);
+    setError("");
+    setResults([]);
+
+    try {
+      const data = await fetchUserData(query, location, minRepos);
+      setResults(data);
+    } catch (err) {
+      setError("Looks like we can't find the user.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
