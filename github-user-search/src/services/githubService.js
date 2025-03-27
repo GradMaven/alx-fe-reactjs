@@ -1,7 +1,8 @@
-// src/services/githubService.js
+
 import axios from 'axios';
 
 const BASE_URL = 'https://api.github.com';
+const SEARCH_USERS_ENDPOINT = 'https://api.github.com/search/users?q=';
 
 const fetchAdvancedUserData = async (params) => {
   try {
@@ -15,8 +16,8 @@ const fetchAdvancedUserData = async (params) => {
     const queryString = queryParts.join(' ');
     const perPage = 10;
     
-    // Explicitly construct the URL with q parameter
-    const apiUrl = `${BASE_URL}/search/users?q=${encodeURIComponent(queryString)}`;
+    // Explicitly use the SEARCH_USERS_ENDPOINT with q parameter
+    const apiUrl = `${SEARCH_USERS_ENDPOINT}${encodeURIComponent(queryString)}`;
     
     const response = await axios.get(apiUrl, {
       params: {
@@ -30,13 +31,12 @@ const fetchAdvancedUserData = async (params) => {
       response.data.items.map(user => 
         axios.get(`${BASE_URL}/users/${user.login}`)
           .then(res => res.data)
-          .catch(() => null) // Skip if user details fail to load
-      )
+          .catch(() => null)
     );
 
     return {
       ...response.data,
-      items: detailedUsers.filter(user => user !== null) // Filter out any failed requests
+      items: detailedUsers.filter(user => user !== null)
     };
   } catch (error) {
     if (error.response && error.response.status === 404) {
